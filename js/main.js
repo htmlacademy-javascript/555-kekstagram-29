@@ -89,7 +89,7 @@ const getRandomArrayElement = (elements) => elements[getRandom(0, elements.lengt
 const generateCommentId = createIdGenerator(); //получение id комментария — любое число, не должны повторяться
 const generatePhotoId = createRandomIdFromRange(MIN_PHOTO_COUNT, MAX_PHOTO_COUNT); //получение id фото — число от 1 до 25. Идентификаторы не должны повторяться.
 
-const photoComments = () => ({
+const createPhotoComments = () => ({
   id: generateCommentId(),
   avatar: `img/avatar-${getRandom(MIN_AVATAR_COUNT, MAX_AVATAR_COUNT)}.png`,
   message: getRandomArrayElement(MESSAGES),
@@ -101,7 +101,7 @@ const createPhoto = () => ({
   url: `photos/${generatePhotoId()}.jpg`,
   description: getRandomArrayElement(DESCRIPSIONS),
   likes: getRandom(MIN_LIKES, MAX_LIKES),
-  comments: Array.from({length: getRandom(MIN_COMMENT_COUNT,MAX_COMMENT_COUNT)}, photoComments)
+  comments: Array.from({length: getRandom(MIN_COMMENT_COUNT,MAX_COMMENT_COUNT)}, createPhotoComments)
 });
 
 const photoDescription = Array.from({length: MAX_PHOTO_COUNT}, createPhoto);
