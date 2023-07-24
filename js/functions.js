@@ -2,7 +2,6 @@ const getCheckStringLength = (string, lengthLimit) => string.length <= lengthLim
 
 getCheckStringLength('проверяемая строка', 10);
 
-
 const getCheckStingIsPalindrome = (rawString) => {
   const string = rawString.replaceAll(' ', '').toLowerCase();
   for (let i = 0; i < string.length / 2; i++) {
