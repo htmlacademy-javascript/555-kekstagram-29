@@ -28,6 +28,8 @@ function createIdGenerator () {
   };
 }
 
+const generateId = createIdGenerator();
+
 //получение целого числа из переданного диапазона. Взято из раздела 4.12 Практическая польза замыканий и чуточку доработано
 
 const getRandomNumber = (min, max) => {
@@ -57,4 +59,7 @@ function createRandomIdFromRange (min, max) {
   };
 }
 
-export {getRandomNumber, createIdGenerator, createRandomIdFromRange};
+//проверка нажатой клавиши Esc
+const isEscapeKey = (evt) => evt.key === 'Escape';
+
+export {getRandomNumber, generateId, createRandomIdFromRange, isEscapeKey};
