@@ -96,7 +96,7 @@ const fillFullPhoto = (({ url, likes, comments, description }) => { //превр
 function openFullPhoto() {
   fullPhoto.classList.remove('hidden');
   socialCommentCount.classList.remove('hidden');
-  commentsLoader.addEventListener('click', displayMoreComments);
+  commentsLoader.addEventListener('click', () => displayMoreComments());
   body.classList.add('.modal-open');
 
   document.addEventListener('keydown', onEscKeydown);
@@ -106,7 +106,7 @@ function openFullPhoto() {
 function closeFullPhoto() {
   fullPhoto.classList.add('hidden');
   socialCommentCount.classList.add('hidden');
-  commentsLoader.removeEventListener('click', displayMoreComments);
+  commentsLoader.removeEventListener('click', () => displayMoreComments());
   body.classList.remove('.modal-open');
 
   document.removeEventListener('keydown', onEscKeydown);
