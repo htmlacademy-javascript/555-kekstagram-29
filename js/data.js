@@ -1,4 +1,4 @@
-import {getRandomNumber, createIdGenerator, createRandomIdFromRange} from './util.js';
+import {getRandomNumber, generateId, createRandomIdFromRange} from './util.js';
 
 const NAMES = [
   'Воланд',
@@ -46,23 +46,27 @@ const MAX_COMMENT_COUNT = 30;
 
 
 const getRandomArrayElement = (elements) => elements[getRandomNumber(0, elements.length - 1)]; //получение случайного элемента из массива данных для формирования заданных массивов
-const generateCommentId = createIdGenerator(); //получение id комментария — любое число, не должны повторяться
+
 const generatePhotoId = createRandomIdFromRange(MIN_PHOTO_COUNT, MAX_PHOTO_COUNT); //получение id фото — число от 1 до 25. Идентификаторы не должны повторяться.
 
 const createPhotoComments = () => ({
-  id: generateCommentId(),
-  avatar: `img/avatar-${getRandomNumber(MIN_AVATAR_COUNT, MAX_AVATAR_COUNT)}.png`,
+  id: generateId(),
+  avatar: `img/avatar-${getRandomNumber(MIN_AVATAR_COUNT, MAX_AVATAR_COUNT)}.svg`,
   message: getRandomArrayElement(MESSAGES),
   name: getRandomArrayElement(NAMES)
 });
 
-const createPhoto = () => ({
-  id: generatePhotoId(),
-  url: `photos/${generatePhotoId()}.jpg`,
-  description: getRandomArrayElement(DESCRIPSIONS),
-  likes: getRandomNumber(MIN_LIKES, MAX_LIKES),
-  comments: Array.from({length: getRandomNumber(MIN_COMMENT_COUNT,MAX_COMMENT_COUNT)}, createPhotoComments)
-});
+const createPhoto = () => {
+  const unicPhotoId = generatePhotoId();
+  return {
+    id: unicPhotoId,
+    url: `photos/${ unicPhotoId }.jpg`,
+    description: getRandomArrayElement(DESCRIPSIONS),
+    likes: getRandomNumber(MIN_LIKES, MAX_LIKES),
+    comments: Array.from({ length: getRandomNumber(MIN_COMMENT_COUNT, MAX_COMMENT_COUNT) }, createPhotoComments)
+  };
+};
 
-const photoDescription = Array.from({length: MAX_PHOTO_COUNT}, createPhoto);
-window.console.log(photoDescription);
+const photoDescription = () => Array.from({length: MAX_PHOTO_COUNT}, createPhoto);
+
+export {createPhoto, photoDescription};
