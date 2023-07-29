@@ -1,4 +1,10 @@
 import {isEscapeKey} from './util.js';
+import {getCheckStringLength} from './util.js';
+import {getArrayFromString} from './util.js';
+import {findDuplicates} from './util.js';
+
+const MAX_COMMENT_LENGTH = 140;
+const MAX_HASHTAG_COUNT = 5;
 
 const body = document.querySelector('body');
 const uploadFile = document.querySelector('#upload-file'); //изначальное поле для загрузки изображения
@@ -7,7 +13,56 @@ const uploadCancel = document.querySelector('#upload-cancel'); //кнопка д
 const textHashtags = document.querySelector('.text__hashtags'); //поле для добавления хэш-тегов
 const textDescription = document.querySelector('.text__description'); //поле для добавления комментария к изображению
 //const imgUploadSubmit = document.querySelector('.img-upload__submit'); //кнопка для отправки данных на сервер
-//
+const regularValue = /^#[A-Za-zА-Яа-яЁё0-9]{1,19}$|(^$)/; //регулярное выражение для хэш-тегов
+const imgUploadForm = document.querySelector('.img-upload__form');
+
+//валидация полей формы
+const pristine = new Pristine(imgUploadForm, {
+  classTo: 'img-upload__text',
+  errorClass: 'img-upload__text--invalid',
+  successClass: 'img-upload__text--valid',
+  errorTextParent: 'img-upload__text',
+  errorTextTag: 'div',
+  errorTextClass: 'img-upload__error'
+});
+
+//валидация хэш-тегов
+
+//проверка длины массива, что она меньше или равна 5, тогда возвращает true, иначе false
+const validateArrayLength = (hashtags) => getArrayFromString(hashtags).length <= MAX_HASHTAG_COUNT;
+
+pristine.addValidator(
+  imgUploadForm.querySelector('.text__hashtags'),
+  validateArrayLength,
+  'Нельзя указать больше пяти хэш-тегов.'
+);
+
+//проверка соответствия каждого элемента массива регулярному выражению, если хотя бы один элемент не соответствует — возвращает false
+const validateRegularValue = (hashtags) => getArrayFromString(hashtags).every((hashtag) => regularValue.test(hashtag));
+
+pristine.addValidator(
+  imgUploadForm.querySelector('.text__hashtags'),
+  validateRegularValue,
+  'Хэш-тег начинается с символа # и не может содержать пробелы, спецсимволы (#, @, $ и т. п.), символы пунктуации (тире, дефис, запятая и т.п.), эмодзи и т.д. Минимальная длина хэш-тега 1 символ, максимальная – 20 символов.'
+);
+
+//проверка на уникальность каждого хэш-тега
+const validateDuplicates = (hashtags) => findDuplicates(getArrayFromString(hashtags));
+
+pristine.addValidator(
+  imgUploadForm.querySelector('.text__hashtags'),
+  validateDuplicates,
+  'Один и тот же хэш-тег не может быть использован дважды.'
+);
+
+//валидация комментария
+const validateTextDescription = (description) => getCheckStringLength(description, MAX_COMMENT_LENGTH);
+
+pristine.addValidator(
+  imgUploadForm.querySelector('.text__description'),
+  validateTextDescription,
+  'Длина комментария не может составлять больше 140 символов.'
+);
 
 //закрытие окна загрузки при нажатии клавиши esc
 const onEscKeydown = (evt) => {
