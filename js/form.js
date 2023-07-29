@@ -50,6 +50,6 @@ function closeUserModal() {
   textDescription.removeEventListener('keydown', stopEvent); // удаление обработчика на запрет закрытия окна при фокусе
 }
 
-uploadFile.addEventListener('click', () => openUserModal());//открытие окна при клике кнопки 'загрузить'
+uploadFile.addEventListener('click', () => openUserModal());//открытие окна при клике кнопки 'загрузить'; обернула функцию в обработчик
 
-uploadCancel.addEventListener('click', () => closeUserModal()); //закрытие окна при клике на кнопку для закрытия формы редактирования изображения
+uploadCancel.addEventListener('click', () => closeUserModal()); //закрытие окна при клике на кнопку для закрытия формы редактирования изображения; обернула функцию в обработчик
