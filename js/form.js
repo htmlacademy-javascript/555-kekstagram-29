@@ -1,7 +1,8 @@
-import {isEscapeKey} from './util.js';
-import {getCheckStringLength} from './util.js';
-import {getArrayFromString} from './util.js';
-import {findDuplicates} from './util.js';
+import {isEscapeKey, getCheckStringLength, getArrayFromString, findDuplicates} from './util.js';
+import {showForm} from './data-upload.js';
+import { imageUploadPreview, onScaleClick } from './scale.js';
+import {resetFilter, addEffect} from './slider.js';
+import {sendData} from './api.js';
 
 const MAX_COMMENT_LENGTH = 140;
 const MAX_HASHTAG_COUNT = 5;
@@ -12,9 +13,13 @@ const imgUploadOverlay = document.querySelector('.img-upload__overlay'); //фо�
 const uploadCancel = document.querySelector('#upload-cancel'); //кнопка для закрытия формы редактирования изображения
 const textHashtags = document.querySelector('.text__hashtags'); //поле для добавления хэш-тегов
 const textDescription = document.querySelector('.text__description'); //поле для добавления комментария к изображению
-//const imgUploadSubmit = document.querySelector('.img-upload__submit'); //кнопка для отправки данных на сервер
+const imgUploadSubmit = document.querySelector('.img-upload__submit'); //кнопка для отправки данных на сервер
 const regularValue = /^#[A-Za-zА-Яа-яЁё0-9]{1,19}$|(^$)/; //регулярное выражение для хэш-тегов
-const imgUploadForm = document.querySelector('.img-upload__form');
+const imgUploadForm = document.querySelector('.img-upload__form'); //форма
+const effectLevel = document.querySelector('.effect-level'); //филдсет слайдера
+const effectsList = document.querySelector('.effects__list'); //список эффектов
+const buttonControlSmaller = document.querySelector('.scale__control--smaller'); //кнопка уменьшения масштаба
+const buttonControlBigger = document.querySelector('.scale__control--bigger'); //кнопка увеличения масштаба
 
 //валидация полей формы
 const pristine = new Pristine(imgUploadForm, {
@@ -77,7 +82,7 @@ const stopEvent = (evt) => {
   evt.stopPropagation();
 };
 
-//сбрасывание значения поля выбора файла
+//очистка формы
 const resetForm = () => {
   uploadFile.value = '';
   document.querySelector('.img-upload__form').reset();
@@ -86,25 +91,85 @@ const resetForm = () => {
 //функция открытия окна добавления изображения
 function openUserModal() {
   uploadFile.addEventListener('change', () => {
+    effectLevel.classList.add('hidden'); //по умолчанию должен быть выбран эффект «Оригинал», при выборе эффекта «Оригинал» слайдер и его контейнер (элемент .img-upload__effect-level) скрываются
     imgUploadOverlay.classList.remove('hidden'); //показывается форма редактирования изображения ТЗ 1.2
     body.classList.add('modal-open'); //показывается форма редактирования изображения ТЗ 1.2
     document.addEventListener('keydown', onEscKeydown); //добавление обработчика для закрытия окна клавишей esc
     textHashtags.addEventListener('keydown', stopEvent); //если фокус находится в поле ввода хэш-тега, нажатие на Esc не должно приводить к закрытию формы редактирования изображения
     textDescription.addEventListener('keydown', stopEvent); //если фокус находится в поле ввода комментария, нажатие на Esc не должно приводить к закрытию формы редактирования изображения
+    effectsList.addEventListener('click', addEffect);//добавление функции изменения эффектов на загруженном изображении
+    buttonControlSmaller.addEventListener('click', onScaleClick);
+    buttonControlBigger.addEventListener('click', onScaleClick);
   });
 }
 
 //функция закрытия окна добавления изображения
 function closeUserModal() {
+  imageUploadPreview.style.transform = 'scale(1)'; //масштаб редактируемого изображения по умолчанию 100%
+  resetFilter();
   imgUploadOverlay.classList.add('hidden'); //закрытие формы редактирования изображения ТЗ 1.3
   body.classList.remove('modal-open'); //закрытие формы редактирования изображения ТЗ 1.3
-  resetForm(); //сбрасывание значения поля выбора файла
+  resetForm(); //очистка формы
 
   document.removeEventListener('keydown', onEscKeydown); //удаление обработчика для закрытия окна клавишей esc
   textHashtags.removeEventListener('keydown', stopEvent); // удаление обработчика на запрет закрытия окна при фокусе
   textDescription.removeEventListener('keydown', stopEvent); // удаление обработчика на запрет закрытия окна при фокусе
+  effectsList.removeEventListener('click', addEffect);//удаление функции изменения эффектов на загруженном изображении
+  buttonControlSmaller.removeEventListener('click', onScaleClick);
+  buttonControlBigger.removeEventListener('click', onScaleClick);
 }
 
 uploadFile.addEventListener('click', () => openUserModal());//открытие окна при клике кнопки 'загрузить'
 
 uploadCancel.addEventListener('click', () => closeUserModal()); //закрытие окна при клике на кнопку для закрытия формы редактирования изображения
+
+//блокировка кнопки отправки данных
+const blockSubmitButton = () => {
+  imgUploadSubmit.disabled = true;
+  imgUploadSubmit.textContent = 'Загружаем...';
+};
+
+//разблокировка кнопки отправки данных
+const unblockSubmitButton = () => {
+  imgUploadSubmit.disabled = false;
+  imgUploadSubmit.textContent = 'Опубликовать';
+};
+
+//если отправка данных прошла успешно, показывается соответствующее сообщение, форма редактирования изображения закрывается, все данные, введённые в форму, и контрол фильтра приходят в исходное состояние
+const reloadAfterSuccess = () => {
+  resetForm();
+  resetFilter();
+  showForm();
+};
+
+//если при отправке данных произошла ошибка запроса, нужно показать соответствующее сообщение, при закрытии форма редактирования изображения закрывается, все данные, введённые в форму, и контрол фильтра приходят в исходное состояние
+const reloadAfterError = () => {
+  resetForm();
+  resetFilter();
+  showForm(false);
+};
+
+//отправка формы
+const setUserFormSubmit = () => {
+  imgUploadForm.addEventListener('submit', (evt) => {
+    evt.preventDefault();
+
+    const isValid = pristine.validate();
+    if (isValid) {
+      blockSubmitButton();
+      sendData(
+        () => {
+          reloadAfterSuccess();
+          unblockSubmitButton();
+        },
+        () => {
+          reloadAfterError();
+          unblockSubmitButton();
+        },
+        new FormData(evt.target),
+      );
+    }
+  });
+};
+
+export {effectLevel, closeUserModal, setUserFormSubmit};
