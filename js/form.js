@@ -1,7 +1,7 @@
 import {isEscapeKey, getCheckStringLength, getArrayFromString, findDuplicates} from './util.js';
 import {showForm} from './data-upload.js';
 import { imageUploadPreview, onScaleClick } from './scale.js';
-import {resetFilter, addEffect} from './slider.js';
+import {resetFilter, onPhotoAddEffect} from './slider.js';
 import {sendData} from './api.js';
 
 const MAX_COMMENT_LENGTH = 140;
@@ -97,7 +97,7 @@ function openUserModal() {
     document.addEventListener('keydown', onEscKeydown); //добавление обработчика для закрытия окна клавишей esc
     textHashtags.addEventListener('keydown', stopEvent); //если фокус находится в поле ввода хэш-тега, нажатие на Esc не должно приводить к закрытию формы редактирования изображения
     textDescription.addEventListener('keydown', stopEvent); //если фокус находится в поле ввода комментария, нажатие на Esc не должно приводить к закрытию формы редактирования изображения
-    effectsList.addEventListener('click', addEffect);//добавление функции изменения эффектов на загруженном изображении
+    effectsList.addEventListener('click', onPhotoAddEffect);//добавление функции изменения эффектов на загруженном изображении
     buttonControlSmaller.addEventListener('click', onScaleClick);
     buttonControlBigger.addEventListener('click', onScaleClick);
   });
@@ -114,7 +114,7 @@ function closeUserModal() {
   document.removeEventListener('keydown', onEscKeydown); //удаление обработчика для закрытия окна клавишей esc
   textHashtags.removeEventListener('keydown', stopEvent); // удаление обработчика на запрет закрытия окна при фокусе
   textDescription.removeEventListener('keydown', stopEvent); // удаление обработчика на запрет закрытия окна при фокусе
-  effectsList.removeEventListener('click', addEffect);//удаление функции изменения эффектов на загруженном изображении
+  effectsList.removeEventListener('click', onPhotoAddEffect);//удаление функции изменения эффектов на загруженном изображении
   buttonControlSmaller.removeEventListener('click', onScaleClick);
   buttonControlBigger.removeEventListener('click', onScaleClick);
 }

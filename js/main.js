@@ -6,7 +6,7 @@ import './scale.js';
 import './slider.js';
 import './upload-image.js';
 import './debounce.js';
-import { renderPhoto, onButtonClick, photos } from './photo-preview.js';
+import { renderPhotos, makeFilters, photos } from './photo-preview.js';
 import { setUserFormSubmit, closeUserModal } from './form.js';
 import { getData } from './api.js';
 
@@ -14,8 +14,8 @@ const getTask = async () => {
   const data = await getData();
 
   photos.setData(data);
-  renderPhoto();
-  onButtonClick();
+  renderPhotos();
+  makeFilters();
 
   document.querySelector('.img-filters').classList.remove('img-filters--inactive');
   setUserFormSubmit(closeUserModal);

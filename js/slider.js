@@ -85,7 +85,7 @@ const resetFilter = () => {
   effectLevel.classList.add('hidden');
 };
 
-const addEffect = (evt) => {
+const onPhotoAddEffect = (evt) => {
   const currentEffectValue = evt.target.value; //значение эффекта в зависимости от выбранного пункта
   if (evt.target.classList.contains('effects__radio')) {
     effectLevel.classList.remove('hidden'); //показывает слайдер при выборе одного из значений среди радиокнопок .effects__radio
@@ -104,4 +104,4 @@ const addEffect = (evt) => {
   }
 };
 
-export {resetFilter, addEffect};
+export {resetFilter, onPhotoAddEffect};
