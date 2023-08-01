@@ -2,12 +2,12 @@ import { fillFullPhoto } from './photo-full.js';
 import { debounce } from './debounce.js';
 import { getRandomNumber } from './util.js';
 
-const previewPhotoBlock = document.querySelector('.pictures');//блок для вставки созданных элементов
-const previewPhotoTemplate = document.querySelector('#picture').content.querySelector('.picture');//поиск элемента в нужном шаблоне
-const filterForm = document.querySelector('.img-filters__form'); //форма фильтрации изображений от других пользователей
-const defaultFilter = document.querySelector('#filter-default'); //фильтр «По умолчанию»
-const randomFilter = document.querySelector('#filter-random'); //фильтр «Случайные»
-const discussedFilter = document.querySelector('#filter-discussed'); //фильтр «Обсуждаемые»
+const previewPhotoBlock = document.querySelector('.pictures');
+const previewPhotoTemplate = document.querySelector('#picture').content.querySelector('.picture');
+const filterForm = document.querySelector('.img-filters__form');
+const defaultFilter = document.querySelector('#filter-default');
+const randomFilter = document.querySelector('#filter-random');
+const discussedFilter = document.querySelector('#filter-discussed');
 
 const photos = {
   data: [],
@@ -17,7 +17,6 @@ const photos = {
   },
 };
 
-//функция фильтрации по комментариям
 const filterDiscussed = (first, second) => {
   if (first.comments < second.comments) {
     return 1;
@@ -26,7 +25,6 @@ const filterDiscussed = (first, second) => {
   }
 };
 
-//функция фильтрации по умолчанию
 const filterDefault = (first, second) => {
   if (first.id > second.id) {
     return 1;
@@ -35,27 +33,25 @@ const filterDefault = (first, second) => {
   }
 };
 
-//запись результата функции по отрисовке фотографий пользователей в переменную
 const renderPhotos = (uploadedPhotos) => {
 
-  const previewPhotoFragment = document.createDocumentFragment(); //DOM-объект для вставки сгенерированных DOM-элементов
+  const previewPhotoFragment = document.createDocumentFragment();
   const usersPhotos = photos.data.slice(0, uploadedPhotos);
 
-  usersPhotos.forEach(({ url, likes, comments, description }) => { //превращение параметров объектов в переменные
-    const previewPhotoElement = previewPhotoTemplate.cloneNode(true);//клонирование шаблона для создания элементов
-    previewPhotoElement.querySelector('.picture__img').src = url; //адрес изображения url подставляется как атрибут src изображения
-    previewPhotoElement.querySelector('.picture__likes').textContent = likes; //количество лайков likes выводится в блок .picture__likes
-    previewPhotoElement.querySelector('.picture__comments').textContent = comments.length; //количество комментариев comments выводится в блок .picture__comments
+  usersPhotos.forEach(({ url, likes, comments, description }) => {
+    const previewPhotoElement = previewPhotoTemplate.cloneNode(true);
+    previewPhotoElement.querySelector('.picture__img').src = url;
+    previewPhotoElement.querySelector('.picture__likes').textContent = likes;
+    previewPhotoElement.querySelector('.picture__comments').textContent = comments.length;
 
-    previewPhotoFragment.appendChild(previewPhotoElement); //создание элементов с данными
+    previewPhotoFragment.appendChild(previewPhotoElement);
 
-    //обработчик события — открытие окна полноразмерного изображения по клику на превью
     previewPhotoElement.addEventListener('click', () => {
       fillFullPhoto({ url, likes, comments, description });
     });
   });
 
-  previewPhotoBlock.appendChild(previewPhotoFragment);//вставка готовых элементов с данными в нужный блок
+  previewPhotoBlock.appendChild(previewPhotoFragment);
 };
 
 const removeFilter = () => {

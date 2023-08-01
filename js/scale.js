@@ -2,10 +2,9 @@ const STEP = 25;
 const MIN_VALUE = 25;
 const MAX_VALUE = 100;
 
-const inputControlValue = document.querySelector('.scale__control--value'); //поле со значением масштаба
-const imageUploadPreview = document.querySelector('.img-upload__preview img'); //редактируемое изображение
+const inputControlValue = document.querySelector('.scale__control--value');
+const imageUploadPreview = document.querySelector('.img-upload__preview img');
 
-//уменьшение или увеличение изображения по «клику» на кнопку «-»
 const onScaleClick = (evt) => {
   const target = evt.target;
 
