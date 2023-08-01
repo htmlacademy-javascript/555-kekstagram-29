@@ -36,7 +36,7 @@ const filterDefault = (first, second) => {
 };
 
 //запись результата функции по отрисовке фотографий пользователей в переменную
-const renderPhoto = (uploadedPhotos) => {
+const renderPhotos = (uploadedPhotos) => {
 
   const previewPhotoFragment = document.createDocumentFragment(); //DOM-объект для вставки сгенерированных DOM-элементов
   const usersPhotos = photos.data.slice(0, uploadedPhotos);
@@ -72,10 +72,10 @@ const rerenderPhotos = () => {
   }
 };
 
-const onButtonClick = () => {
+const makeFilters = () => {
   filterForm.addEventListener('click', debounce((evt) => {
-    const makeDebounce = debounce(() => renderPhoto());
-    const makeRandomDebounce = debounce(() => renderPhoto(10));
+    const makeDebounce = debounce(() => renderPhotos());
+    const makeRandomDebounce = debounce(() => renderPhotos(10));
     rerenderPhotos();
     removeFilter();
     switch (evt.target.id) {
@@ -97,4 +97,4 @@ const onButtonClick = () => {
   }));
 };
 
-export {renderPhoto, onButtonClick, photos};
+export {renderPhotos, makeFilters, photos};
