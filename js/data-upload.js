@@ -3,8 +3,8 @@ import {isEscapeKey} from './util.js';
 
 const ALERT_SHOW_TIME = 4000;
 
-const successContainer = document.querySelector('#success').content.querySelector('.success'); //поиск разметки сообщения об успешной загрузке изображения и отправке данных в нужном шаблоне
-const errorContainer = document.querySelector('#error').content.querySelector('.error'); //поиск разметки сообщения об обшибке загрузки изображения и отправки данных в нужном шаблоне
+const successContainer = document.querySelector('#success').content.querySelector('.success');
+const errorContainer = document.querySelector('#error').content.querySelector('.error');
 
 function onMessageEscKeydown(evt) {
   if (isEscapeKey(evt)) {
@@ -19,7 +19,6 @@ function onContains(evt) {
   }
 }
 
-//если отправка данных прошла успешно, показывается соответствующее сообщение; если при отправке данных произошла ошибка запроса, нужно показать соответствующее сообщение
 const showForm = (success = true) => {
   const message = success ? successContainer.cloneNode(true) : errorContainer.cloneNode(true);
   body.appendChild(message);
@@ -36,7 +35,6 @@ const showForm = (success = true) => {
   document.addEventListener('click', onContains.bind(message));
 };
 
-//если при загрузке данных с сервера произошла ошибка запроса, нужно показать соответствующее сообщение; дизайн блока с сообщением нужно придумать самостоятельно
 const showAlert = (message) => {
   const alertContainer = document.createElement('div');
   alertContainer.style.position = 'absolute';
