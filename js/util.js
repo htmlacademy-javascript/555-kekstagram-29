@@ -8,4 +8,8 @@ const getRandomNumber = () => Math.random() - 0.5;
 
 const isEscapeKey = (evt) => evt.key === 'Escape';
 
-export {getRandomNumber, isEscapeKey, getCheckStringLength, getArrayFromString, findDuplicates};
+const onElementStopEvent = (evt) => {
+  evt.stopPropagation();
+};
+
+export {getRandomNumber, isEscapeKey, getCheckStringLength, getArrayFromString, findDuplicates, onElementStopEvent};
