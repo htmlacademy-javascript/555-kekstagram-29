@@ -1,38 +1,54 @@
-import {body} from './photo-full.js';
 import {isEscapeKey} from './util.js';
+import {onEscKeydown} from './form.js';
 
 const ALERT_SHOW_TIME = 4000;
 
-const successContainer = document.querySelector('#success').content.querySelector('.success');
-const errorContainer = document.querySelector('#error').content.querySelector('.error');
+const successMessage = document.querySelector('#success').content.querySelector('.success');
+const errorMessage = document.querySelector('#error').content.querySelector('.error');
+
+const closeMessage = () => {
+  const messageBlock = document.querySelector('.success') || document.querySelector('.error');
+
+  if (messageBlock === document.querySelector('.error')) {
+    messageBlock.remove();
+    document.body.removeEventListener('click', onBodyClick);
+    document.removeEventListener('keydown', onMessageEscKeydown);
+    document.addEventListener('keydown', onEscKeydown);
+  }
+  messageBlock.remove();
+  document.body.removeEventListener('click', onBodyClick);
+  document.removeEventListener('keydown', onMessageEscKeydown);
+};
 
 function onMessageEscKeydown(evt) {
   if (isEscapeKey(evt)) {
     evt.preventDefault();
-    this.style.display = 'none';
+    closeMessage();
   }
 }
 
-function onContains(evt) {
-  if (evt.target.contains(this)) {
-    this.style.display = 'none';
+function onBodyClick(evt) {
+  if (!(evt.target.closest('.success__inner')) || (evt.target.closest('.error__inner'))) {
+    evt.preventDefault();
+    closeMessage();
   }
 }
 
-const showForm = (success = true) => {
-  const message = success ? successContainer.cloneNode(true) : errorContainer.cloneNode(true);
-  body.appendChild(message);
-  message.style.zIndex = 5;
-  const button = message.querySelector('button');
-  const keydownFunc = onMessageEscKeydown.bind(message);
+const showMessage = (message, closeButtonClass) => {
+  document.body.append(message);
+  document.querySelector(closeButtonClass).addEventListener('click', closeMessage);
+  document.body.addEventListener('click', onBodyClick);
+  document.addEventListener('keydown', onMessageEscKeydown);
+  document.removeEventListener('keydown', onEscKeydown);
+};
 
-  button.addEventListener('click', () => {
-    message.style.display = 'none';
-    document.removeEventListener('keydown', keydownFunc);
-  });
+const showSuccessMessage = () => {
+  showMessage(successMessage, '.success__button');
+};
 
-  document.addEventListener('keydown', keydownFunc);
-  document.addEventListener('click', onContains.bind(message));
+
+const showErrorMessage = () => {
+  showMessage(errorMessage, '.error__button');
 };
 
 const showAlert = (message) => {
@@ -60,4 +76,4 @@ const showAlert = (message) => {
   }, ALERT_SHOW_TIME);
 };
 
-export {showForm, showAlert};
+export {showAlert, showSuccessMessage, showErrorMessage};

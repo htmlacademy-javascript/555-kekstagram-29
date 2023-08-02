@@ -17,21 +17,9 @@ const photos = {
   },
 };
 
-const filterDiscussed = (first, second) => {
-  if (first.comments < second.comments) {
-    return 1;
-  } else {
-    return -1;
-  }
-};
+const filterDiscussed = (first, second) => (first.comments < second.comments) ? 1 : -1;
 
-const filterDefault = (first, second) => {
-  if (first.id > second.id) {
-    return 1;
-  } else {
-    return -1;
-  }
-};
+const filterDefault = (first, second) => (first.id > second.id) ? 1 : -1;
 
 const renderPhotos = (uploadedPhotos) => {
 
@@ -60,19 +48,15 @@ const removeFilter = () => {
   defaultFilter.classList.remove('img-filters__button--active');
 };
 
-const rerenderPhotos = () => {
-  const pictures = document.getElementsByClassName('picture');
-  let numberPicture;
-  while ((numberPicture = pictures[0])) {
-    numberPicture.parentNode.removeChild(numberPicture);
-  }
+const removePhotos = () => {
+  document.querySelectorAll('a.picture').forEach((el) => el.remove());
 };
 
 const makeFilters = () => {
   filterForm.addEventListener('click', debounce((evt) => {
     const makeDebounce = debounce(() => renderPhotos());
     const makeRandomDebounce = debounce(() => renderPhotos(10));
-    rerenderPhotos();
+    removePhotos();
     removeFilter();
     switch (evt.target.id) {
       case 'filter-default':

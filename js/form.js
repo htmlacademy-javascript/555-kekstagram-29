@@ -1,5 +1,5 @@
-import {isEscapeKey, getCheckStringLength, getArrayFromString, findDuplicates} from './util.js';
-import {showForm} from './data-upload.js';
+import {isEscapeKey, getCheckStringLength, getArrayFromString, findDuplicates, onElementStopEvent} from './util.js';
+import {showSuccessMessage, showErrorMessage} from './data-upload.js';
 import { imageUploadPreview, onScaleClick } from './scale.js';
 import {resetFilter, onPhotoAddEffect} from './slider.js';
 import {sendData} from './api.js';
@@ -69,10 +69,6 @@ const onEscKeydown = (evt) => {
   }
 };
 
-const stopEvent = (evt) => {
-  evt.stopPropagation();
-};
-
 const resetForm = () => {
   uploadFile.value = '';
   document.querySelector('.img-upload__form').reset();
@@ -84,8 +80,8 @@ function openUserModal() {
     imgUploadOverlay.classList.remove('hidden');
     body.classList.add('modal-open');
     document.addEventListener('keydown', onEscKeydown);
-    textHashtags.addEventListener('keydown', stopEvent);
-    textDescription.addEventListener('keydown', stopEvent);
+    textHashtags.addEventListener('keydown', onElementStopEvent);
+    textDescription.addEventListener('keydown', onElementStopEvent);
     effectsList.addEventListener('click', onPhotoAddEffect);
     buttonControlSmaller.addEventListener('click', onScaleClick);
     buttonControlBigger.addEventListener('click', onScaleClick);
@@ -100,8 +96,8 @@ function closeUserModal() {
   resetForm();
 
   document.removeEventListener('keydown', onEscKeydown);
-  textHashtags.removeEventListener('keydown', stopEvent);
-  textDescription.removeEventListener('keydown', stopEvent);
+  textHashtags.removeEventListener('keydown', onElementStopEvent);
+  textDescription.removeEventListener('keydown', onElementStopEvent);
   effectsList.removeEventListener('click', onPhotoAddEffect);
   buttonControlSmaller.removeEventListener('click', onScaleClick);
   buttonControlBigger.removeEventListener('click', onScaleClick);
@@ -124,16 +120,14 @@ const unblockSubmitButton = () => {
 const reloadAfterSuccess = () => {
   resetForm();
   resetFilter();
-  showForm();
+  showSuccessMessage();
 };
 
 const reloadAfterError = () => {
-  resetForm();
-  resetFilter();
-  showForm(false);
+  showErrorMessage();
 };
 
-const setUserFormSubmit = () => {
+const setUserFormSubmit = (onSuccess) => {
   imgUploadForm.addEventListener('submit', (evt) => {
     evt.preventDefault();
 
@@ -143,6 +137,7 @@ const setUserFormSubmit = () => {
       sendData(
         () => {
           reloadAfterSuccess();
+          onSuccess();
           unblockSubmitButton();
         },
         () => {
@@ -155,4 +150,4 @@ const setUserFormSubmit = () => {
   });
 };
 
-export {effectLevel, closeUserModal, setUserFormSubmit};
+export {effectLevel, closeUserModal, setUserFormSubmit, onEscKeydown};
