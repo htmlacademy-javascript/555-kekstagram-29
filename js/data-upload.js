@@ -1,4 +1,3 @@
-//import {body} from './photo-full.js';
 import {isEscapeKey} from './util.js';
 import {onEscKeydown} from './form.js';
 
