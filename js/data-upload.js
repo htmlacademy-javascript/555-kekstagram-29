@@ -8,6 +8,7 @@ const errorMessage = document.querySelector('#error').content.querySelector('.er
 
 const closeMessage = () => {
   const messageBlock = document.querySelector('.success') || document.querySelector('.error');
+
   if (messageBlock === document.querySelector('.error')) {
     messageBlock.remove();
     document.body.removeEventListener('click', onBodyClick);
@@ -49,22 +50,6 @@ const showSuccessMessage = () => {
 const showErrorMessage = () => {
   showMessage(errorMessage, '.error__button');
 };
-
-/* const showForm = (success = true) => {
-  const message = success ? successContainer.cloneNode(true) : errorContainer.cloneNode(true);
-  body.appendChild(message);
-  message.style.zIndex = 5;
-  const button = message.querySelector('button');
-
-  document.addEventListener('keydown', onMessageEscKeydown.bind(message));
-  document.addEventListener('click', onContains.bind(message));
-
-  button.addEventListener('click', () => {
-    message.style.display = 'none';
-    document.removeEventListener('keydown', onMessageEscKeydown.bind(message));
-    document.removeEventListener('click', onContains.bind(message));
-  });
-}; */
 
 const showAlert = (message) => {
   const alertContainer = document.createElement('div');
